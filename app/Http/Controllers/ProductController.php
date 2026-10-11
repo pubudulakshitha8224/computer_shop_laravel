@@ -34,4 +34,33 @@ class ProductController extends Controller
         return redirect()->route('products.index')
             ->with('success', 'Product added successfully.');
     }
+
+    public function edit(Product $product)
+    {
+        return view('products.edit', compact('product'));
+    }
+
+    public function update(Request $request, Product $product)
+    {
+        $data = $request->validate([
+            'product_name' => 'required|string|max:255',
+            'brand' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0|max:99999999.99',
+            'quantity' => 'required|integer|min:0|max:2147483647',
+            'description' => 'nullable|string',
+        ]);
+
+        $product->update($data);
+
+        return redirect()->route('products.index')
+            ->with('success', 'Product updated successfully.');
+    }
+
+    public function destroy(Product $product)
+    {
+        $product->delete();
+
+        return redirect()->route('products.index')
+            ->with('success', 'Product deleted successfully.');
+    }
 }

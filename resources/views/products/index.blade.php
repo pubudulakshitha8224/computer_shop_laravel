@@ -27,6 +27,23 @@
             color: white;
             text-decoration: none;
             border-radius: 5px;
+            border: none;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .delete {
+            background: #dc2626;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .actions form {
+            margin: 0;
         }
 
         table {
@@ -74,6 +91,7 @@
                     <th>Price (LKR)</th>
                     <th>Quantity</th>
                     <th>Description</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -85,10 +103,31 @@
                         <td>{{ number_format($product->price, 2) }}</td>
                         <td>{{ $product->quantity }}</td>
                         <td>{{ $product->description ?? '-' }}</td>
+                        <td>
+                            <div class="actions">
+                                <a href="{{ route('products.edit', $product) }}"
+                                   class="button">
+                                    Edit
+                                </a>
+
+                                <form
+                                    action="{{ route('products.destroy', $product) }}"
+                                    method="POST"
+                                    onsubmit="return confirm('Delete this product?');"
+                                >
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button type="submit" class="button delete">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6">No products added yet.</td>
+                        <td colspan="7">No products added yet.</td>
                     </tr>
                 @endforelse
             </tbody>
