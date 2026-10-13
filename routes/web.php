@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CustomerController;
 
 Route::get('/', function () {
     return 'Computer Shop Management System';
@@ -10,9 +11,8 @@ Route::get('/', function () {
 Route::resource('products', ProductController::class)
     ->except(['show']);
 
-Route::get('/customers', function () {
-    return 'Customers Page';
-});
+Route::resource('customers', CustomerController::class)
+    ->only(['index', 'create', 'store', 'edit', 'update']);
 
 Route::get('/sales', function () {
     return 'Sales Page';
