@@ -12,7 +12,7 @@ Route::resource('products', ProductController::class)
     ->except(['show']);
 
 Route::resource('customers', CustomerController::class)
-    ->only(['index', 'create', 'store', 'edit', 'update']);
+    ->only(['index', 'create', 'store', 'edit', 'update','destroy']);
 
 Route::get('/sales', function () {
     return 'Sales Page';

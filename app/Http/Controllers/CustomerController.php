@@ -63,4 +63,12 @@ public function update(Request $request, Customer $customer)
         ->route('customers.index')
         ->with('success', 'Customer updated successfully.');
 }
+    public function destroy(Customer $customer)
+    {
+        $customer->delete();
+
+        return redirect()
+            ->route('customers.index')
+            ->with('success', 'Customer deleted successfully.');
+    }
 }
