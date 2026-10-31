@@ -21,6 +21,24 @@
             color: #2563eb;
         }
 
+        .add-button {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 10px 16px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .success {
+            background: #dcfce7;
+            color: #166534;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -52,6 +70,14 @@
     </nav>
 
     <h1>Sales</h1>
+
+    <a href="{{ route('sales.create') }}" class="add-button">Add Sale</a>
+
+    @if (session('success'))
+        <div class="success">
+            {{ session('success') }}
+        </div>
+    @endif
 
     <table>
         <thead>
