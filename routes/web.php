@@ -21,4 +21,4 @@ Route::resource('customers', CustomerController::class)
     ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 
 Route::resource('sales', SaleController::class)
-    ->only(['index', 'create', 'store']);
+    ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
