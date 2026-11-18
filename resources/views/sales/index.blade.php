@@ -12,14 +12,28 @@
             background: #f4f6f8;
         }
 
-        nav {
-            margin-bottom: 25px;
-        }
+       nav {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+}
 
-        nav a {
-            margin-right: 15px;
-            color: #2563eb;
-        }
+nav a {
+    display: inline-block;
+    background: #2563eb;
+    color: white;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+nav a:hover {
+    background: #7c3aed;
+    transform: translateY(-4px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
 
         .add-button {
             display: inline-block;
