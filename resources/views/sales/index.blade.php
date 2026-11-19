@@ -291,6 +291,8 @@
 
     <h1>Sales</h1>
 
+    <!-- Admin and Staff can add sales -->
+
     <a href="{{ route('sales.create') }}" class="add-button">
         + Add Sale
     </a>
@@ -369,7 +371,10 @@
                     <th>Quantity</th>
                     <th>Total Price (LKR)</th>
                     <th>Sale Date</th>
-                    <th>Actions</th>
+
+                    @if (auth()->user()->role === 'admin')
+                        <th>Actions</th>
+                    @endif
                 </tr>
             </thead>
 
@@ -391,38 +396,44 @@
 
                         <td>{{ $sale->sale_date }}</td>
 
-                        <td>
-                            @if ($sale->product_id)
+                        <!-- Only Admin can edit and delete -->
 
-                                <a href="{{ route('sales.edit', $sale->id) }}"
-                                   class="edit-button">
-                                    Edit
-                                </a>
+                        @if (auth()->user()->role === 'admin')
+                            <td>
+                                @if ($sale->product_id)
 
-                                <form action="{{ route('sales.destroy', $sale->id) }}"
-                                      method="POST"
-                                      style="display: inline;"
-                                      onsubmit="return confirm('Are you sure you want to delete this sale?');">
+                                    <a href="{{ route('sales.edit', $sale->id) }}"
+                                       class="edit-button">
+                                        Edit
+                                    </a>
 
-                                    @csrf
-                                    @method('DELETE')
+                                    <form action="{{ route('sales.destroy', $sale->id) }}"
+                                          method="POST"
+                                          style="display: inline;"
+                                          onsubmit="return confirm('Are you sure you want to delete this sale?');">
 
-                                    <button type="submit" class="delete-button">
-                                        Delete
-                                    </button>
+                                        @csrf
+                                        @method('DELETE')
 
-                                </form>
+                                        <button type="submit" class="delete-button">
+                                            Delete
+                                        </button>
 
-                            @else
-                                <span>Not available</span>
-                            @endif
-                        </td>
+                                    </form>
+
+                                @else
+                                    <span>Not available</span>
+                                @endif
+                            </td>
+                        @endif
+
                     </tr>
 
                 @empty
 
                     <tr>
-                        <td colspan="7" class="empty">
+                        <td colspan="{{ auth()->user()->role === 'admin' ? 7 : 6 }}"
+                            class="empty">
                             No sales found.
                         </td>
                     </tr>

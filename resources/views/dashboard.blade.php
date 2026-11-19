@@ -36,6 +36,11 @@
             color: white;
             padding: 28px 35px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .header h1 {
@@ -47,6 +52,36 @@
             color: #cbd5e1;
         }
 
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .user-name {
+            color: white;
+            font-weight: bold;
+        }
+
+        .role-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .admin-badge {
+            background: #2563eb;
+            color: white;
+        }
+
+        .staff-badge {
+            background: #16a34a;
+            color: white;
+        }
+
         .container {
             max-width: 1400px;
             margin: auto;
@@ -55,6 +90,7 @@
 
         .navigation {
             display: flex;
+            align-items: center;
             flex-wrap: wrap;
             gap: 12px;
             margin-bottom: 30px;
@@ -79,6 +115,27 @@
 
         .navigation a.active {
             background: #7c3aed;
+        }
+
+        .logout-form {
+            margin-left: auto;
+        }
+
+        .logout-button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-button:hover {
+            background: #991b1b;
+            transform: translateY(-4px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
         .dashboard-title {
@@ -220,6 +277,15 @@
                 padding: 10px 15px;
             }
 
+            .logout-form {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .logout-button {
+                width: 100%;
+            }
+
             .section {
                 padding: 15px;
             }
@@ -230,17 +296,49 @@
 <body>
 
     <div class="header">
-        <h1>Computer Shop Management System</h1>
-        <p>Dashboard Overview</p>
+
+        <div>
+            <h1>Computer Shop Management System</h1>
+            <p></p>
+        </div>
+
+        <div class="user-info">
+
+            <span class="user-name">
+                {{ auth()->user()->name }}
+            </span>
+
+            @if (auth()->user()->role === 'admin')
+                <span class="role-badge admin-badge">
+                    ADMIN
+                </span>
+            @else
+                <span class="role-badge staff-badge">
+                    STAFF
+                </span>
+            @endif
+
+        </div>
+
     </div>
 
     <div class="container">
 
         <div class="navigation">
+
             <a href="{{ route('dashboard') }}" class="active">Dashboard</a>
+
             <a href="{{ route('products.index') }}">Products</a>
+
             <a href="{{ route('customers.index') }}">Customers</a>
+
             <a href="{{ route('sales.index') }}">Sales</a>
+
+            <form action="{{ route('logout') }}" method="POST" class="logout-form">
+                @csrf
+                <button type="submit" class="logout-button">Logout</button>
+            </form>
+
         </div>
 
         <h2 class="dashboard-title">Dashboard Summary</h2>

@@ -22,14 +22,8 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(15px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .container {
@@ -124,26 +118,22 @@
         }
 
         @media (max-width: 600px) {
-            body {
-                margin: 10px;
-            }
-
-            .container {
-                padding: 15px;
-            }
+            body { margin: 10px; }
+            .container { padding: 15px; }
         }
     </style>
 </head>
 
 <body>
-
     <div class="container">
 
         <h1>Customers</h1>
 
-        <a href="{{ route('customers.create') }}" class="button">
-            + Add Customer
-        </a>
+        @if (auth()->user()->role === 'admin')
+            <a href="{{ route('customers.create') }}" class="button">
+                + Add Customer
+            </a>
+        @endif
 
         @if (session('success'))
             <div class="success">
@@ -160,7 +150,10 @@
                         <th>Phone</th>
                         <th>Email</th>
                         <th>Address</th>
-                        <th>Actions</th>
+
+                        @if (auth()->user()->role === 'admin')
+                            <th>Actions</th>
+                        @endif
                     </tr>
                 </thead>
 
@@ -173,33 +166,37 @@
                             <td>{{ $customer->email ?? '-' }}</td>
                             <td>{{ $customer->address ?? '-' }}</td>
 
-                            <td>
-                                <div class="actions">
+                            @if (auth()->user()->role === 'admin')
+                                <td>
+                                    <div class="actions">
 
-                                    <a href="{{ route('customers.edit', $customer) }}"
-                                       class="button">
-                                        Edit
-                                    </a>
+                                        <a href="{{ route('customers.edit', $customer) }}"
+                                           class="button">
+                                            Edit
+                                        </a>
 
-                                    <form action="{{ route('customers.destroy', $customer) }}"
-                                          method="POST"
-                                          onsubmit="return confirm('Are you sure you want to delete this customer?');">
+                                        <form action="{{ route('customers.destroy', $customer) }}"
+                                              method="POST"
+                                              onsubmit="return confirm('Are you sure you want to delete this customer?');">
 
-                                        @csrf
-                                        @method('DELETE')
+                                            @csrf
+                                            @method('DELETE')
 
-                                        <button type="submit" class="button delete">
-                                            Delete
-                                        </button>
-                                    </form>
+                                            <button type="submit" class="button delete">
+                                                Delete
+                                            </button>
+                                        </form>
 
-                                </div>
-                            </td>
+                                    </div>
+                                </td>
+                            @endif
                         </tr>
 
                     @empty
                         <tr>
-                            <td colspan="6">No customers found.</td>
+                            <td colspan="{{ auth()->user()->role === 'admin' ? 6 : 5 }}">
+                                No customers found.
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -207,6 +204,5 @@
         </div>
 
     </div>
-
 </body>
 </html>

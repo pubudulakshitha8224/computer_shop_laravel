@@ -119,6 +119,23 @@
             animation: fadeIn 0.5s ease;
         }
 
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-button:hover {
+            color: #7c3aed;
+        }
+
+        .stock {
+            font-weight: bold;
+            color: #15803d;
+        }
+
         @media (max-width: 600px) {
             body {
                 margin: 10px;
@@ -135,6 +152,10 @@
 
     <div class="container">
 
+        <a href="{{ route('dashboard') }}" class="back-button">
+            ← Back to Dashboard
+        </a>
+
         <h1>Products</h1>
 
         @if (session('success'))
@@ -143,9 +164,12 @@
             </div>
         @endif
 
-        <a href="{{ route('products.create') }}" class="button">
-            + Add Product
-        </a>
+        {{-- Admin Only: Add Product Button --}}
+        @if (auth()->user()->role === 'admin')
+            <a href="{{ route('products.create') }}" class="button">
+                + Add Product
+            </a>
+        @endif
 
         <table>
             <thead>
@@ -156,7 +180,10 @@
                     <th>Price (LKR)</th>
                     <th>Quantity</th>
                     <th>Description</th>
-                    <th>Actions</th>
+
+                    @if (auth()->user()->role === 'admin')
+                        <th>Actions</th>
+                    @endif
                 </tr>
             </thead>
 
@@ -164,40 +191,53 @@
                 @forelse ($products as $product)
                     <tr>
                         <td>{{ $product->id }}</td>
+
                         <td>{{ $product->product_name }}</td>
+
                         <td>{{ $product->brand }}</td>
+
                         <td>{{ number_format($product->price, 2) }}</td>
-                        <td>{{ $product->quantity }}</td>
+
+                        <td class="stock">
+                            {{ $product->quantity }}
+                        </td>
+
                         <td>{{ $product->description ?? '-' }}</td>
 
-                        <td>
-                            <div class="actions">
+                        {{-- Admin Only: Edit and Delete --}}
+                        @if (auth()->user()->role === 'admin')
+                            <td>
+                                <div class="actions">
 
-                                <a href="{{ route('products.edit', $product) }}"
-                                   class="button">
-                                    Edit
-                                </a>
+                                    <a href="{{ route('products.edit', $product) }}"
+                                       class="button">
+                                        Edit
+                                    </a>
 
-                                <form
-                                    action="{{ route('products.destroy', $product) }}"
-                                    method="POST"
-                                    onsubmit="return confirm('Delete this product?');"
-                                >
-                                    @csrf
-                                    @method('DELETE')
+                                    <form
+                                        action="{{ route('products.destroy', $product) }}"
+                                        method="POST"
+                                        onsubmit="return confirm('Delete this product?');"
+                                    >
+                                        @csrf
+                                        @method('DELETE')
 
-                                    <button type="submit" class="button delete">
-                                        Delete
-                                    </button>
-                                </form>
+                                        <button type="submit" class="button delete">
+                                            Delete
+                                        </button>
+                                    </form>
 
-                            </div>
-                        </td>
+                                </div>
+                            </td>
+                        @endif
+
                     </tr>
 
                 @empty
                     <tr>
-                        <td colspan="7">No products added yet.</td>
+                        <td colspan="{{ auth()->user()->role === 'admin' ? 7 : 6 }}">
+                            No products added yet.
+                        </td>
                     </tr>
                 @endforelse
             </tbody>
