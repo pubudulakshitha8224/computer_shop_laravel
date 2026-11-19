@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
@@ -10,13 +11,42 @@ use Illuminate\Validation\ValidationException;
 
 class SaleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $sales = Sale::with('customer')
-            ->orderBy('id', 'desc')
-            ->get();
+        $search = $request->search;
+        $saleDate = $request->sale_date;
 
-        return view('sales.index', compact('sales'));
+        $sales = Sale::with('customer')
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('product_name', 'like', "%{$search}%")
+                        ->orWhereHas('customer', function ($customerQuery) use ($search) {
+                            $customerQuery->where(
+                                'customer_name',
+                                'like',
+                                "%{$search}%"
+                            );
+                        });
+                });
+            })
+            ->when($saleDate, function ($query, $saleDate) {
+                $query->whereDate('sale_date', $saleDate);
+            })
+            ->orderBy('id', 'desc')
+           ->get();
+
+$totalSalesCount = $sales->count();
+$totalQuantity = $sales->sum('quantity');
+$totalSalesAmount = $sales->sum('total_price');
+
+return view('sales.index', compact(
+    'sales',
+    'search',
+    'saleDate',
+    'totalSalesCount',
+    'totalQuantity',
+    'totalSalesAmount'
+));
     }
 
     public function create()
@@ -156,9 +186,7 @@ class SaleController extends Controller
             );
 
             if ($oldProductId == $newProductId) {
-                $newProduct->quantity =
-                    $availableStock - $quantity;
-
+                $newProduct->quantity = $availableStock - $quantity;
                 $newProduct->save();
             } else {
                 $oldProduct->increment('quantity', $sale->quantity);
