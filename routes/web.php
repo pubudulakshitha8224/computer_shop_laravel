@@ -8,8 +8,13 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ReportController;
 
-// Public Customer Routes
+
+// ========================================
+// PUBLIC CUSTOMER ROUTES
+// ========================================
 
 Route::get('/shop', function () {
     return view('customer.home');
@@ -18,7 +23,10 @@ Route::get('/shop', function () {
 Route::get('/shop/products', [ProductController::class, 'customerProducts'])
     ->name('customer.products');
 
-// Cart Routes (No Login Required)
+
+// ========================================
+// CART ROUTES
+// ========================================
 
 Route::get('/shop/cart', [CartController::class, 'index'])
     ->name('cart.index');
@@ -33,12 +41,30 @@ Route::post('/shop/cart/remove/{id}', [CartController::class, 'remove'])
     ->name('cart.remove');
 
 
-// Home
+// ========================================
+// CUSTOMER ORDER / CHECKOUT ROUTES
+// ========================================
+
+Route::get('/shop/checkout', [OrderController::class, 'checkout'])
+    ->name('order.checkout');
+
+Route::post('/shop/order/place', [OrderController::class, 'placeOrder'])
+    ->name('order.place');
+
+
+// ========================================
+// HOME
+// ========================================
+
 Route::get('/', function () {
     return redirect('/dashboard');
 });
 
-// Guest Routes
+
+// ========================================
+// GUEST ROUTES
+// ========================================
+
 Route::middleware('guest')->group(function () {
 
     Route::get('/login', [AuthController::class, 'showLogin'])
@@ -48,26 +74,34 @@ Route::middleware('guest')->group(function () {
 
 });
 
-// Protected Routes
+
+// ========================================
+// PROTECTED ROUTES
+// ========================================
+
 Route::middleware('auth')->group(function () {
 
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])
         ->name('logout');
 
+
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 
-    // Products - Admin and Staff can view
+
+    // PRODUCTS
     Route::get('/products', [ProductController::class, 'index'])
         ->name('products.index');
 
-    // Customers - Admin and Staff can view
+
+    // CUSTOMERS
     Route::get('/customers', [CustomerController::class, 'index'])
         ->name('customers.index');
 
-    // Sales - Admin and Staff can view and add
+
+    // SALES
     Route::get('/sales', [SaleController::class, 'index'])
         ->name('sales.index');
 
@@ -77,7 +111,39 @@ Route::middleware('auth')->group(function () {
     Route::post('/sales', [SaleController::class, 'store'])
         ->name('sales.store');
 
-    // Admin Only Routes
+
+    // ORDER MANAGEMENT
+    Route::get('/orders', [OrderController::class, 'index'])
+        ->name('orders.index');
+
+    Route::get('/orders/{id}', [OrderController::class, 'show'])
+        ->name('orders.show');
+
+    Route::put('/orders/{id}/status', [OrderController::class, 'updateStatus'])
+        ->name('orders.updateStatus');
+
+
+    // ====================================
+    // REPORTS
+    // ====================================
+
+    // Daily Sales Report
+    Route::get('/reports/daily-sales', [ReportController::class, 'dailySales'])
+        ->name('reports.dailySales');
+
+    // Monthly Sales Report
+    Route::get('/reports/monthly-sales', [ReportController::class, 'monthlySales'])
+        ->name('reports.monthlySales');
+
+    // Total Income Report
+    Route::get('/reports/total-income', [ReportController::class, 'totalIncome'])
+        ->name('reports.totalIncome');
+
+
+    // ====================================
+    // ADMIN ONLY ROUTES
+    // ====================================
+
     Route::middleware('role:admin')->group(function () {
 
         // Product Management

@@ -49,12 +49,10 @@
             text-decoration: none;
             border-radius: 5px;
             margin-bottom: 20px;
-            transition: all 0.3s ease;
         }
 
         .add-button:hover {
             background: #1d4ed8;
-            transform: translateY(-3px);
         }
 
         .success {
@@ -73,8 +71,6 @@
             margin-bottom: 20px;
         }
 
-        /* Sales Summary Cards */
-
         .summary-cards {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -92,7 +88,6 @@
 
         .summary-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.15);
         }
 
         .summary-card h3 {
@@ -117,8 +112,6 @@
         .summary-card.income {
             background: #7c3aed;
         }
-
-        /* Search and Filter */
 
         .filter-box {
             background: white;
@@ -153,7 +146,6 @@
             text-decoration: none;
             cursor: pointer;
             font-size: 14px;
-            transition: all 0.3s ease;
         }
 
         .search-button {
@@ -162,7 +154,6 @@
 
         .search-button:hover {
             background: #1d4ed8;
-            transform: translateY(-3px);
         }
 
         .clear-button {
@@ -171,10 +162,7 @@
 
         .clear-button:hover {
             background: #475569;
-            transform: translateY(-3px);
         }
-
-        /* Sales Table */
 
         .table-container {
             width: 100%;
@@ -205,8 +193,6 @@
             color: #666;
         }
 
-        /* Edit and Delete Buttons */
-
         .edit-button {
             display: inline-block;
             background: #16a34a;
@@ -226,29 +212,13 @@
             cursor: pointer;
         }
 
-        .edit-button,
-        .delete-button {
-            transition: all 0.3s ease;
-        }
-
         .edit-button:hover {
             background: #15803d;
-            transform: translateY(-4px);
-            box-shadow: 0 5px 12px rgba(22, 163, 74, 0.3);
         }
 
         .delete-button:hover {
             background: #b91c1c;
-            transform: translateY(-4px);
-            box-shadow: 0 5px 12px rgba(220, 38, 38, 0.3);
         }
-
-        .edit-button:active,
-        .delete-button:active {
-            transform: scale(0.95);
-        }
-
-        /* Responsive Design */
 
         @media (max-width: 700px) {
             body {
@@ -284,14 +254,14 @@
 <body>
 
     <nav>
+        <a href="{{ route('dashboard') }}">Dashboard</a>
         <a href="{{ route('products.index') }}">Products</a>
         <a href="{{ route('customers.index') }}">Customers</a>
         <a href="{{ route('sales.index') }}">Sales</a>
+        <a href="{{ route('orders.index') }}">All Orders</a>
     </nav>
 
-    <h1>Sales</h1>
-
-    <!-- Admin and Staff can add sales -->
+    <h1>Sales Management</h1>
 
     <a href="{{ route('sales.create') }}" class="add-button">
         + Add Sale
@@ -309,7 +279,15 @@
         </div>
     @endif
 
-    <!-- Sales Summary Cards -->
+    @if ($errors->any())
+        <div class="error-message">
+            @foreach ($errors->all() as $error)
+                <p>{{ $error }}</p>
+            @endforeach
+        </div>
+    @endif
+
+    <!-- Sales Summary -->
 
     <div class="summary-cards">
 
@@ -379,6 +357,7 @@
             </thead>
 
             <tbody>
+
                 @forelse ($sales as $sale)
 
                     <tr>
@@ -396,21 +375,22 @@
 
                         <td>{{ $sale->sale_date }}</td>
 
-                        <!-- Only Admin can edit and delete -->
-
                         @if (auth()->user()->role === 'admin')
                             <td>
+
                                 @if ($sale->product_id)
 
-                                    <a href="{{ route('sales.edit', $sale->id) }}"
-                                       class="edit-button">
+                                    <a
+                                        href="{{ route('sales.edit', $sale->id) }}"
+                                        class="edit-button">
                                         Edit
                                     </a>
 
-                                    <form action="{{ route('sales.destroy', $sale->id) }}"
-                                          method="POST"
-                                          style="display: inline;"
-                                          onsubmit="return confirm('Are you sure you want to delete this sale?');">
+                                    <form
+                                        action="{{ route('sales.destroy', $sale->id) }}"
+                                        method="POST"
+                                        style="display: inline;"
+                                        onsubmit="return confirm('Are you sure you want to delete this sale?');">
 
                                         @csrf
                                         @method('DELETE')
@@ -422,8 +402,11 @@
                                     </form>
 
                                 @else
+
                                     <span>Not available</span>
+
                                 @endif
+
                             </td>
                         @endif
 
@@ -432,13 +415,15 @@
                 @empty
 
                     <tr>
-                        <td colspan="{{ auth()->user()->role === 'admin' ? 7 : 6 }}"
+                        <td
+                            colspan="{{ auth()->user()->role === 'admin' ? 7 : 6 }}"
                             class="empty">
                             No sales found.
                         </td>
                     </tr>
 
                 @endforelse
+
             </tbody>
         </table>
 

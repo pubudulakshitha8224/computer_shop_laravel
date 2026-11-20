@@ -136,6 +136,22 @@
             border-radius: 6px;
         }
 
+        .checkout-btn {
+            display: inline-block;
+            margin-top: 25px;
+            margin-left: 10px;
+            padding: 12px 25px;
+            background: #16a34a;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .checkout-btn:hover {
+            background: #15803d;
+        }
+
         .empty-cart {
             background: white;
             padding: 35px;
@@ -295,6 +311,11 @@
                 <h3>
                     Total: LKR {{ number_format($total, 2) }}
                 </h3>
+
+                <a href="{{ route('order.checkout') }}"
+                   class="checkout-btn">
+                    Proceed to Checkout
+                </a>
 
             </div>
 

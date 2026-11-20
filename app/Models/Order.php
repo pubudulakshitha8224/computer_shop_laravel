@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Order extends Model
+{
+    protected $fillable = [
+        'customer_name',
+        'phone',
+        'address',
+        'total_amount',
+        'status',
+        'stock_deducted',
+    ];
+
+    protected $casts = [
+        'stock_deducted' => 'boolean',
+    ];
+
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+}

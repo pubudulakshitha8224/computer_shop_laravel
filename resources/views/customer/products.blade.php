@@ -168,12 +168,48 @@
             line-height: 1.5;
         }
 
+        .cart-btn {
+            display: block;
+            width: 100%;
+            margin-top: 18px;
+            padding: 12px;
+            background: #16a34a;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .cart-btn:hover {
+            background: #15803d;
+        }
+
         .empty-message {
             background: white;
             padding: 25px;
             border-radius: 10px;
             color: #64748b;
             margin-top: 20px;
+        }
+
+        .message {
+            padding: 14px;
+            border-radius: 6px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+        .success-message {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
         }
 
         .back-btn {
@@ -236,6 +272,7 @@
     <nav>
         <a href="{{ route('shop.home') }}">Home</a>
         <a href="{{ route('customer.products') }}">Products</a>
+        <a href="{{ route('cart.index') }}">My Cart</a>
     </nav>
 
     <div class="container">
@@ -243,6 +280,18 @@
         <h2>Our Products</h2>
 
         <p>Explore our available computers and accessories.</p>
+
+        @if(session('success'))
+            <div class="message success-message">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="message error-message">
+                {{ session('error') }}
+            </div>
+        @endif
 
         <!-- Product Search -->
         <form action="{{ route('customer.products') }}" method="GET" class="search-form">
@@ -305,6 +354,20 @@
                         <p class="description">
                             {{ $product->description }}
                         </p>
+
+                    @endif
+
+                    @if($product->quantity > 0)
+
+                        <form action="{{ route('cart.add', $product->id) }}" method="POST">
+
+                            @csrf
+
+                            <button type="submit" class="cart-btn">
+                                Add to Cart
+                            </button>
+
+                        </form>
 
                     @endif
 
